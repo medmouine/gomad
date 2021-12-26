@@ -4,7 +4,7 @@
 
 ### Functional Patterns in Golang
 # GOMAD (Early stage)
-### This package is still in an early stage of development. Feel free to open a PR and contribute.
+### This package is still in an early stage of development. Feel free to open a PR and contribute or just open an issue to help me priorities features.
 
 Following is a list of future modules coming up in no specific order:
 
