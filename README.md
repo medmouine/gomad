@@ -33,7 +33,26 @@ go get github.com/medmouine/gomad/maybe
 
 ## Modules
 ### Maybe
-#### Example
+`Maybe` is a nomadic pattern allowing for data manipulation while abstracting whether or not the value actually exists or is `nil`. For example, if we fetch data from an external API that could be `nil`, we can still perform manipulation on it while disregarding its actual state. The `Maybe` struct will take care of managing the value itself. This is similar to the Maybe interface in [Elm](https://package.elm-lang.org/packages/elm/core/latest/Maybe) or [Haskell](https://wiki.haskell.org/Maybe) or [Optional in Java](https://docs.oracle.com/javase/8/docs/api/java/util/Optional.html).
+
+You can use the functions `Just`, `None` or `Nillable` to instanciate a `Maybe` struct. The type parameter will be determined by the passed argument or by specifying it. For example:
+```
+maybeNilInteger := maybe.Nillable[int](nil)
+
+nilInteger := maybe.None[int]()
+
+someInteger := maybe.Just[int](1)
+```
+
+#### Usage
+TODO
+<!-- #### Just
+`Just` referes to a value we know is not `nil`.
 ```
 TODO
 ```
+##### None
+`Just` referes to a value we know is `nil`.
+```
+TODO
+``` -->
