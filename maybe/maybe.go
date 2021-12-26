@@ -2,7 +2,7 @@ package maybe
 
 import "go/types"
 
-type nullable interface {
+type nillable interface {
 	any | types.Nil
 }
 
@@ -11,21 +11,21 @@ type Maybe[T any] struct {
 	isNil bool
 }
 
-func Nullable[U nullable](val *U) Maybe[U] {
+func Nillable[U nillable](val *U) Maybe[U] {
 	if val == nil {
 		return Maybe[U]{nil, true}
 	}
 	return Maybe[U]{val, false}
 }
 
-func Just[U nullable](val U) Maybe[U] {
-	if nullable(val) == nil {
+func Just[U nillable](val U) Maybe[U] {
+	if nillable(val) == nil {
 		return Maybe[U]{nil, true}
 	}
 	return Maybe[U]{&val, false}
 }
 
-func None[V nullable]() Maybe[V] {
+func None[V nillable]() Maybe[V] {
 	return Maybe[V]{nil, true}
 }
 

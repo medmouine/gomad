@@ -50,22 +50,22 @@ func TestMaybe_None(t *testing.T) {
 
 func TestMaybe_Nullable(t *testing.T) {
 	integer := 123
-	gotInteger := Nullable(&integer)
+	gotInteger := Nillable(&integer)
 
 	if !reflect.DeepEqual(gotInteger.value, &integer) {
-		t.Errorf("Nullable() = %v, want %v", gotInteger.value, &integer)
+		t.Errorf("Nillable() = %v, want %v", gotInteger.value, &integer)
 	}
 	if !reflect.DeepEqual(gotInteger.isNil, false) {
-		t.Errorf("Nullable() = %v, want %v", gotInteger.isNil, false)
+		t.Errorf("Nillable() = %v, want %v", gotInteger.isNil, false)
 	}
 
-	gotNil := Nullable[int](nil)
+	gotNil := Nillable[int](nil)
 
 	if gotNil.value != nil {
-		t.Errorf("Nullable() = %v, want %v", gotNil.value, nil)
+		t.Errorf("Nillable() = %v, want %v", gotNil.value, nil)
 	}
 	if !reflect.DeepEqual(gotNil.isNil, true) {
-		t.Errorf("Nullable() = %v, want %v", gotNil.isNil, true)
+		t.Errorf("Nillable() = %v, want %v", gotNil.isNil, true)
 	}
 }
 
@@ -117,7 +117,7 @@ func TestMaybe_Unwrap(t *testing.T) {
 }
 
 func TestMaybe_OrElse(t *testing.T) {
-	m := Nullable[int](nil)
+	m := Nillable[int](nil)
 
 	got := m.OrElse(3)
 
@@ -126,7 +126,7 @@ func TestMaybe_OrElse(t *testing.T) {
 	}
 
 	val := 4
-	m2 := Nullable[int](&val)
+	m2 := Nillable[int](&val)
 
 	got2 := m2.OrElse(3)
 
@@ -136,7 +136,7 @@ func TestMaybe_OrElse(t *testing.T) {
 }
 
 func TestMaybe_OrNil(t *testing.T) {
-	m := Nullable[int](nil)
+	m := Nillable[int](nil)
 
 	got := m.OrNil()
 
@@ -145,7 +145,7 @@ func TestMaybe_OrNil(t *testing.T) {
 	}
 
 	val := 4
-	m2 := Nullable[int](&val)
+	m2 := Nillable[int](&val)
 
 	got2 := *m2.OrNil()
 
@@ -155,14 +155,14 @@ func TestMaybe_OrNil(t *testing.T) {
 }
 
 func TestMaybe_IsNone(t *testing.T) {
-	m := Nullable[int](nil)
+	m := Nillable[int](nil)
 
 	if !m.IsNone() {
 		t.Errorf("IsNone() = %v, want %v", m.IsNone(), true)
 	}
 
 	val := 4
-	m2 := Nullable[int](&val)
+	m2 := Nillable[int](&val)
 
 	if m2.IsNone() {
 		t.Errorf("IsNone() = %v, want %v", m.IsNone(), false)
@@ -170,14 +170,14 @@ func TestMaybe_IsNone(t *testing.T) {
 }
 
 func TestMaybe_IsSome(t *testing.T) {
-	m := Nullable[int](nil)
+	m := Nillable[int](nil)
 
 	if m.IsSome() {
 		t.Errorf("IsSome() = %v, want %v", m.IsSome(), false)
 	}
 
 	val := 4
-	m2 := Nullable[int](&val)
+	m2 := Nillable[int](&val)
 
 	if !m2.IsSome() {
 		t.Errorf("IsSome() = %v, want %v", m.IsSome(), true)
