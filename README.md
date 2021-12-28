@@ -1,5 +1,6 @@
 [![GitHub go.mod Go version of a Go module](https://img.shields.io/github/go-mod/go-version/medmouine/gomad.svg)](https://github.com/medmouine/gomad)
-[![GitHub go.mod Go version of a Go module](https://github.com/medmouine/gomad/workflows/Go/badge.svg)](https://github.com/medmouine/gomad/actions/workflows/go.yml)
+[![Test](https://github.com/medmouine/gomad/workflows/Test/badge.svg)](https://github.com/medmouine/gomad/actions/workflows/test.yml)
+[![Lint](https://github.com/medmouine/gomad/workflows/Lint/badge.svg)](https://github.com/medmouine/gomad/actions/workflows/lint.yml)
 [![Go Reference](https://pkg.go.dev/badge/github.com/medmouine/gomad/maybe.svg)](https://pkg.go.dev/github.com/medmouine/gomad/maybe)
 [![codecov](https://codecov.io/gh/medmouine/gomad/branch/main/graph/badge.svg?token=3DJBNCU1NG)](https://codecov.io/gh/medmouine/gomad)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)

@@ -6,6 +6,12 @@ type nillable interface {
 	any | types.Nil
 }
 
+/*
+Maybe is a monadic pattern allowing for data manipulation while abstracting whether the value actually exists or is nil.
+For example, if we fetch data from an external API that could be nil, we can still perform manipulation on it while disregarding its actual state.
+The Maybe struct will take care of managing the value itself. This is similar to the Maybe interface in Elm or Haskell or Optional in Java.
+This is helpful for CRUD operations by simplifying the code and allowing for seamless manipulation of nullable data.
+*/
 type Maybe[T any] interface {
 	Unwrap() T
 	Map(func(T) T) Maybe[T]
@@ -22,17 +28,26 @@ type maybe[T any] struct {
 	val *T
 }
 
-func Nillable[T nillable](val *T) Maybe[T] {
+/*
+Of returns a new Maybe based on a value that may or may not be nil.
+*/
+func Of[T nillable](val *T) Maybe[T] {
 	if val == nil {
 		return maybe[T]{val: nil}
 	}
 	return maybe[T]{val: val}
 }
 
+/*
+Just returns a new Maybe based on a value that we know is not nil.
+*/
 func Just[T nillable](val T) Maybe[T] {
 	return maybe[T]{val: &val}
 }
 
+/*
+None returns a new Maybe with an empty value we know is nil.
+*/
 func None[T nillable]() Maybe[T] {
 	return maybe[T]{val: nil}
 }

@@ -1,0 +1,26 @@
+name: Lint
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          stable: 'false'
+          go-version: '1.18.0-beta1'
+      - name: Prepare
+        run: |
+          go get -u golang.org/x/lint/golint
+          go install golang.org/x/lint/golint
+      - name: Check
+        run: |
+          gofmt -s -d -e .
+          go vet ./...
+          golint ./...

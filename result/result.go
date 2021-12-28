@@ -2,6 +2,10 @@ package result
 
 import "github.com/medmouine/gomad/maybe"
 
+/*
+Result aims at abstracting all logic related to operations susceptible to failures, such as external API calls, etc.
+It offers constructors and methods to safely manipulate the result in case of success and handle errors gracefully in case of failure.
+*/
 type Result[T any] interface {
 	WithDefault(T) Result[T]
 
@@ -25,14 +29,23 @@ type result[T any] struct {
 	err error
 }
 
+/*
+Ok creates a new Result from a valid value.
+*/
 func Ok[T any](val T) Result[T] {
 	return result[T]{val: &val}
 }
 
+/*
+Err creates a new Result from an invalid value (error).
+*/
 func Err[T any](err error) Result[T] {
 	return result[T]{err: err}
 }
 
+/*
+FromMaybe creates a new Result from a Maybe instance.
+*/
 func FromMaybe[T any](m maybe.Maybe[T], err error) Result[T] {
 	if m.IsNil() {
 		return Err[T](err)
@@ -40,6 +53,9 @@ func FromMaybe[T any](m maybe.Maybe[T], err error) Result[T] {
 	return Ok(m.Unwrap())
 }
 
+/*
+Of creates a new Result from a possibly valid value and an error.
+*/
 func Of[T any](val T, err error) Result[T] {
 	if err != nil {
 		return Err[T](err)

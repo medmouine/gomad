@@ -2,6 +2,12 @@ package either
 
 import "github.com/medmouine/gomad/maybe"
 
+/*
+Either allows to manipulate pairs of mutually exclusive data.
+For example, if we would want to fall back to a value B if A answers to a specific predicate.
+This interface allows integrating this behavior seamlessly by abstracting all the underlying logic of managing both values.
+A common use case for this is form validation for front-end applications.
+*/
 type Either[L any, R any] interface {
 	IsRight() bool
 	MapRight(func(R) R) Either[L, R]
@@ -30,6 +36,9 @@ type either[L any, R any] struct {
 	right *right[L, R]
 }
 
+/*
+FromPredicateC returns a function that creates a new Either based on a given predicate and a Left value in case of failure of the predicate.
+*/
 func FromPredicateC[L any, R any](predicate func(R) bool, left L) func(R) Either[L, R] {
 	return func(candidate R) Either[L, R] {
 		if predicate(candidate) {
@@ -39,6 +48,10 @@ func FromPredicateC[L any, R any](predicate func(R) bool, left L) func(R) Either
 	}
 }
 
+/*
+FromPredicate returns a new Either based on a given predicate and a Left value in case of failure of the predicate
+and a Right value which will be tested against the predicate.
+*/
 func FromPredicate[L any, R any](predicate func(R) bool, right R, left L) Either[L, R] {
 	return FromPredicateC[L, R](predicate, left)(right)
 }
