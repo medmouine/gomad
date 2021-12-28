@@ -94,6 +94,14 @@ func TestMaybe_Map(t *testing.T) {
 	if !got.IsSome() {
 		t.Errorf("Map() = %v, want %v", got.IsSome(), true)
 	}
+
+	got2 := None[int]().Map(func(v int) int {
+		return v + 3
+	})
+
+	if !got2.IsNil() {
+		t.Errorf("Map() = %v, want %v", got2.IsNil(), true)
+	}
 }
 
 func TestMaybe_Unwrap(t *testing.T) {

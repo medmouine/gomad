@@ -26,8 +26,3 @@ func Right[R any](value R) Either[types.Nil, R] {
 func (r right[L, R]) IsRight() bool {
 	return true
 }
-
-func (r *right[L, R]) Map(f func(R) R) *right[L, R] {
-	r.val = f(r.val)
-	return r
-}
