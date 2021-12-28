@@ -11,12 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Go
-        uses: actions/setup-go@v2
+      - uses: actions/setup-go@v2
         with:
           stable: 'false'
           go-version: '1.18.0-beta1'
-
       - name: Test
         run: |
           go test -v ./... -coverprofile=coverage.txt -covermode=atomic
@@ -26,12 +24,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Go
-          uses: actions/setup-go@v2
-          with:
-            stable: 'false'
-            go-version: '1.18.0-beta1'
-
+      - uses: actions/setup-go@v2
+        with:
+          stable: 'false'
+          go-version: '1.18.0-beta1'
       - name: GoGitOps Check
         id: gogitops
         uses: beaujr/gogitops-action@v0.2
