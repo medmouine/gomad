@@ -111,6 +111,10 @@ func TestMaybe_Unwrap(t *testing.T) {
 	if !reflect.DeepEqual(got, 1) {
 		t.Errorf("Unwrap() = %v, want %v", got, 1)
 	}
+
+	defer func() { recover() }()
+	None[int]().Unwrap()
+	t.Errorf("Unwrap() on Nil did not panic")
 }
 
 func TestMaybe_OrElse(t *testing.T) {

@@ -93,6 +93,10 @@ func TestResult_Err(t *testing.T) {
 	if !reflect.DeepEqual(got, errors.New("error")) {
 		t.Errorf("Err() = %v, want %v", got, errors.New("error"))
 	}
+
+	defer func() { recover() }()
+	Ok(1).Err()
+	t.Errorf("Err() on Ok did not panic")
 }
 
 func TestResult_IfErr(t *testing.T) {
@@ -189,6 +193,14 @@ func TestResult_MapErr(t *testing.T) {
 	if !reflect.DeepEqual(got.Err(), errors.New("new error")) {
 		t.Errorf("MapErr() = %v, want %v", got.Err(), errors.New("new error"))
 	}
+
+	got2 := Ok(1).MapErr(func(err error) error {
+		return errors.New("new error")
+	})
+
+	if !reflect.DeepEqual(got2.Ok(), 1) {
+		t.Errorf("MapErr() = %v, want %v", got2.Ok(), 1)
+	}
 }
 
 func TestResult_Maybe(t *testing.T) {
@@ -211,6 +223,10 @@ func TestResult_Ok(t *testing.T) {
 	if !reflect.DeepEqual(got, 1) {
 		t.Errorf("Ok() = %v, want %v", got, 1)
 	}
+
+	defer func() { recover() }()
+	Err[int](errors.New("error")).Ok()
+	t.Errorf("Ok() on Err did not panic")
 }
 
 func TestResult_WithDefault(t *testing.T) {

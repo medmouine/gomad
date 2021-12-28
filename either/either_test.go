@@ -87,6 +87,30 @@ func TestEither_MapRight(t *testing.T) {
 	}
 }
 
+func TestEither_Left(t *testing.T) {
+	got := Left("foo").Left()
+
+	if !reflect.DeepEqual(got, "foo") {
+		t.Errorf("Left() = %v, want %v", got, "foo")
+	}
+
+	defer func() { recover() }()
+	Right("foo").Left()
+	t.Errorf("Left() on Right did not panic")
+}
+
+func TestEither_Right(t *testing.T) {
+	got := Right("foo").Right()
+
+	if !reflect.DeepEqual(got, "foo") {
+		t.Errorf("Right() = %v, want %v", got, "foo")
+	}
+
+	defer func() { recover() }()
+	Left("foo").Right()
+	t.Errorf("Right() on Left did not panic")
+}
+
 func TestEither_IfLeft(t *testing.T) {
 	left := Left("foo")
 
