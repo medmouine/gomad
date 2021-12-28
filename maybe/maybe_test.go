@@ -39,21 +39,21 @@ func TestMaybe_None(t *testing.T) {
 	}
 }
 
-func TestMaybe_Nillable(t *testing.T) {
+func TestMaybe_Of(t *testing.T) {
 	integer := 123
-	gotInteger := Nillable(&integer)
+	gotInteger := Of(&integer)
 
 	if !reflect.DeepEqual(gotInteger.Unwrap(), integer) {
-		t.Errorf("Nillable() = %v, want %v", gotInteger.Unwrap(), integer)
+		t.Errorf("Of() = %v, want %v", gotInteger.Unwrap(), integer)
 	}
 	if gotInteger.IsNil() {
-		t.Errorf("Nillable() = %v, want %v", gotInteger.IsNil(), false)
+		t.Errorf("Of() = %v, want %v", gotInteger.IsNil(), false)
 	}
 
-	gotNil := Nillable[int](nil)
+	gotNil := Of[int](nil)
 
 	if !gotNil.IsNil() {
-		t.Errorf("Nillable() = %v, want %v", gotNil.IsNil(), true)
+		t.Errorf("Of() = %v, want %v", gotNil.IsNil(), true)
 	}
 }
 

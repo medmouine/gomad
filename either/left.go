@@ -19,6 +19,9 @@ func newL[L any, R any](val L) *left[L, R] {
 	return l
 }
 
+/*
+Left returns a new Either value with Left as the passed argument.
+*/
 func Left[L any](value L) Either[L, types.Nil] {
 	return newL[L, types.Nil](value)
 }
