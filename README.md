@@ -45,8 +45,7 @@ nilInteger := maybe.None[int]()
 someInteger := maybe.Just[int](1)
 ```
 
-#### Usage
-TODO
+
 <!-- #### Just
 `Just` referes to a value we know is not `nil`.
 ```
@@ -57,6 +56,8 @@ TODO
 ```
 TODO
 ``` -->
-
+TODO
 ### Either
-
+TODO
+### Result
+TODO
