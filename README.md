@@ -4,7 +4,7 @@
 [![codecov](https://codecov.io/gh/medmouine/gomad/branch/main/graph/badge.svg?token=3DJBNCU1NG)](https://codecov.io/gh/medmouine/gomad)
 
 ### Functional Patterns in Golang
-# GOMAD (Early stage)
+# GOMAD
 ### This package is still in an early stage of development. Feel free to open a PR and contribute or just open an issue to help me priorities features.
 
 Following is a list of future modules coming up in no specific order:
