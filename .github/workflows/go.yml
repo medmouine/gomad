@@ -22,3 +22,8 @@ jobs:
           go test -v ./... -coverprofile=coverage.txt -covermode=atomic
       - name: Upload coverage to Codecov
         run: bash <(curl -s https://codecov.io/bash)
+      - name: GoGitOps Check
+        id: gogitops
+        uses: beaujr/gogitops-action@v0.2
+        with:
+          github-actions-token: ${{secrets.GOGITOPS_TOKEN}}
