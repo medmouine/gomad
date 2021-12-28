@@ -6,70 +6,83 @@ type nillable interface {
 	any | types.Nil
 }
 
-type Maybe[T any] struct {
-	value *T
-	isNil bool
+type Maybe[T any] interface {
+	Unwrap() T
+	Map(func(T) T) Maybe[T]
+	Apply(func(T)) Maybe[T]
+	IsSome() bool
+	IsNil() bool
+	OrElse(func() T) T
+	Or(T) T
+	OrNil() *T
 }
 
-func Nillable[U nillable](val *U) Maybe[U] {
+type maybe[T any] struct {
+	Maybe[T]
+	val *T
+}
+
+func Nillable[T nillable](val *T) Maybe[T] {
 	if val == nil {
-		return Maybe[U]{nil, true}
+		return maybe[T]{val: nil}
 	}
-	return Maybe[U]{val, false}
+	return maybe[T]{val: val}
 }
 
-func Just[U nillable](val U) Maybe[U] {
-	if nillable(val) == nil {
-		return Maybe[U]{nil, true}
-	}
-	return Maybe[U]{&val, false}
+func Just[T nillable](val T) Maybe[T] {
+	return maybe[T]{val: &val}
 }
 
-func None[V nillable]() Maybe[V] {
-	return Maybe[V]{nil, true}
+func None[T nillable]() Maybe[T] {
+	return maybe[T]{val: nil}
 }
 
-func (m Maybe[T]) Unwrap() *T {
-	if !m.isNil {
-		return m.value
+func (m maybe[T]) Unwrap() T {
+	if m.IsSome() {
+		return *m.val
 	}
 	panic(any("unwrap of empty Maybe"))
 }
 
-func (m *Maybe[T]) Map(f func(T) T) *Maybe[T] {
-	if !m.isNil {
-		v := f(*m.value)
-		m.value = &v
+func (m maybe[T]) Map(f func(T) T) Maybe[T] {
+	if m.IsSome() {
+		return Just(f(*m.val))
 	}
 	return m
 }
 
-func (m Maybe[T]) Apply(f func(x T)) *Maybe[T] {
-	if !m.isNil {
-		v := *m.value
-		f(v)
+func (m maybe[T]) Apply(f func(x T)) Maybe[T] {
+	if m.IsSome() {
+		f(m.Unwrap())
 	}
-	return &m
+	return m
 }
 
-func (m *Maybe[T]) IsSome() bool {
-	return !m.isNil
+func (m maybe[T]) IsSome() bool {
+	return m.val != nil
 }
 
-func (m *Maybe[T]) IsNone() bool {
-	return m.isNil
+func (m maybe[T]) IsNil() bool {
+	return m.val == nil
 }
 
-func (m Maybe[T]) OrElse(val T) T {
-	if m.isNil {
-		return val
+func (m maybe[T]) OrElse(f func() T) T {
+	if m.IsNil() {
+		return f()
 	}
-	return *m.value
+	return m.Unwrap()
 }
 
-func (m Maybe[T]) OrNil() *T {
-	if m.isNil {
+func (m maybe[T]) OrNil() *T {
+	if m.IsNil() {
 		return nil
 	}
-	return m.value
+	return m.val
+}
+
+func (m maybe[T]) Or(val T) T {
+	if m.IsNil() {
+		return val
+	}
+	return m.Unwrap()
 }

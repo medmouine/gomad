@@ -9,63 +9,51 @@ func TestMaybe_Just(t *testing.T) {
 	integer := 123
 	gotInt := Just(integer)
 
-	if !reflect.DeepEqual(gotInt.value, &integer) {
-		t.Errorf("Just() = %v, want %v", gotInt.value, &integer)
+	if !reflect.DeepEqual(gotInt.Unwrap(), integer) {
+		t.Errorf("Just() = %v, want %v", gotInt.Unwrap(), integer)
 	}
-	if !reflect.DeepEqual(gotInt.isNil, false) {
-		t.Errorf("Just() = %v, want %v", gotInt.isNil, false)
+	if !reflect.DeepEqual(gotInt.IsNil(), false) {
+		t.Errorf("Just() = %v, want %v", gotInt.IsNil(), false)
 	}
 
 	_string := "abc"
 	gotStr := Just(_string)
 
-	if !reflect.DeepEqual(gotStr.value, &_string) {
-		t.Errorf("Just() = %v, want %v", gotStr.value, &_string)
-	}
-	if !reflect.DeepEqual(gotInt.isNil, false) {
-		t.Errorf("Just() = %v, want %v", gotStr.isNil, false)
+	if !reflect.DeepEqual(gotStr.Unwrap(), _string) {
+		t.Errorf("Just() = %v, want %v", gotStr.Unwrap(), _string)
 	}
 
 	_slice := []int{1, 2, 3}
 	gotSlice := Just(_slice)
 
-	if !reflect.DeepEqual(gotSlice.value, &_slice) {
-		t.Errorf("Just() = %v, want %v", gotSlice.value, &_slice)
-	}
-	if !reflect.DeepEqual(gotInt.isNil, false) {
-		t.Errorf("Just() = %v, want %v", gotSlice.isNil, false)
+	if !reflect.DeepEqual(gotSlice.Unwrap(), _slice) {
+		t.Errorf("Just() = %v, want %v", gotSlice.Unwrap(), _slice)
 	}
 }
 
 func TestMaybe_None(t *testing.T) {
 	got := None[int]()
 
-	if got.value != nil {
-		t.Errorf("None() = %v, want %v", got.value, nil)
-	}
-	if !reflect.DeepEqual(got.isNil, true) {
-		t.Errorf("None() = %v, want %v", got.isNil, true)
+	if !got.IsNil() {
+		t.Errorf("None() = %v, want %v", got.IsNil(), false)
 	}
 }
 
-func TestMaybe_Nullable(t *testing.T) {
+func TestMaybe_Nillable(t *testing.T) {
 	integer := 123
 	gotInteger := Nillable(&integer)
 
-	if !reflect.DeepEqual(gotInteger.value, &integer) {
-		t.Errorf("Nillable() = %v, want %v", gotInteger.value, &integer)
+	if !reflect.DeepEqual(gotInteger.Unwrap(), integer) {
+		t.Errorf("Nillable() = %v, want %v", gotInteger.Unwrap(), integer)
 	}
-	if !reflect.DeepEqual(gotInteger.isNil, false) {
-		t.Errorf("Nillable() = %v, want %v", gotInteger.isNil, false)
+	if gotInteger.IsNil() {
+		t.Errorf("Nillable() = %v, want %v", gotInteger.IsNil(), false)
 	}
 
 	gotNil := Nillable[int](nil)
 
-	if gotNil.value != nil {
-		t.Errorf("Nillable() = %v, want %v", gotNil.value, nil)
-	}
-	if !reflect.DeepEqual(gotNil.isNil, true) {
-		t.Errorf("Nillable() = %v, want %v", gotNil.isNil, true)
+	if !gotNil.IsNil() {
+		t.Errorf("Nillable() = %v, want %v", gotNil.IsNil(), true)
 	}
 }
 
@@ -73,43 +61,44 @@ func TestMaybe_Apply(t *testing.T) {
 	integer := 1
 	m := Just(integer)
 
-	var got int
+	var called = false
 	m.Apply(func(v int) {
-		got = v
+		called = true
 	})
 
-	if !reflect.DeepEqual(got, integer) {
-		t.Errorf("Apply() = %v, want %v", got, integer)
+	if !called {
+		t.Errorf("Apply() called = %v, want %v", called, true)
 	}
-	if !reflect.DeepEqual(m.value, &integer) {
-		t.Errorf("Apply() = %v, want %v", got, &integer)
+	if !reflect.DeepEqual(m.Unwrap(), integer) {
+		t.Errorf("Apply() = %v, want %v", m.Unwrap(), integer)
 	}
-	if !reflect.DeepEqual(m.isNil, false) {
-		t.Errorf("Apply() = %v, want %v", m.isNil, false)
+
+	var called2 = false
+	None[int]().Apply(func(v int) {
+		called2 = true
+	})
+
+	if called2 {
+		t.Errorf("Apply() called = %v, want %v", called2, false)
 	}
 }
 
 func TestMaybe_Map(t *testing.T) {
-	integer := 1
-	m := Just(integer)
-
-	m.Map(func(v int) int {
+	got := Just(1).Map(func(v int) int {
 		return v + 3
 	})
 
-	if !reflect.DeepEqual(*m.value, 4) {
-		t.Errorf("Map() = %v, want %v", m.value, 4)
+	if !reflect.DeepEqual(got.Unwrap(), 4) {
+		t.Errorf("Map() = %v, want %v", got.Unwrap(), 4)
 	}
-	if !reflect.DeepEqual(m.isNil, false) {
-		t.Errorf("Map() = %v, want %v", m.isNil, false)
+	if !got.IsSome() {
+		t.Errorf("Map() = %v, want %v", got.IsSome(), true)
 	}
 }
 
 func TestMaybe_Unwrap(t *testing.T) {
-	integer := 1
-	m := Just(integer)
 
-	got := *m.Unwrap()
+	got := Just(1).Unwrap()
 
 	if !reflect.DeepEqual(got, 1) {
 		t.Errorf("Unwrap() = %v, want %v", got, 1)
@@ -117,69 +106,77 @@ func TestMaybe_Unwrap(t *testing.T) {
 }
 
 func TestMaybe_OrElse(t *testing.T) {
-	m := Nillable[int](nil)
 
-	got := m.OrElse(3)
+	got := None[int]().OrElse(func() int {
+		return 3
+	})
 
 	if !reflect.DeepEqual(got, 3) {
 		t.Errorf("OrElse() = %v, want %v", got, 3)
 	}
 
-	val := 4
-	m2 := Nillable[int](&val)
+	got2 := Just(1).OrElse(func() int {
+		return 3
+	})
 
-	got2 := m2.OrElse(3)
+	if !reflect.DeepEqual(got2, 1) {
+		t.Errorf("OrElse() = %v, want %v", got2, 1)
+	}
+}
 
-	if !reflect.DeepEqual(got2, 4) {
-		t.Errorf("OrElse() = %v, want %v", got2, 4)
+func TestMaybe_Or(t *testing.T) {
+
+	got := None[int]().Or(3)
+
+	if !reflect.DeepEqual(got, 3) {
+		t.Errorf("Or() = %v, want %v", got, 3)
+	}
+
+	got2 := Just(1).Or(3)
+
+	if !reflect.DeepEqual(got2, 1) {
+		t.Errorf("Or() = %v, want %v", got2, 1)
 	}
 }
 
 func TestMaybe_OrNil(t *testing.T) {
-	m := Nillable[int](nil)
-
-	got := m.OrNil()
+	got := None[int]().OrNil()
 
 	if got != nil {
 		t.Errorf("OrNil() = %v, want %v", got, nil)
 	}
 
-	val := 4
-	m2 := Nillable[int](&val)
+	got2 := Just(4).OrNil()
 
-	got2 := *m2.OrNil()
-
-	if !reflect.DeepEqual(got2, 4) {
-		t.Errorf("OrNil() = %v, want %v", got2, 4)
+	if !reflect.DeepEqual(*got2, 4) {
+		t.Errorf("OrNil() = %v, want %v", *got2, 4)
 	}
 }
 
 func TestMaybe_IsNone(t *testing.T) {
-	m := Nillable[int](nil)
+	got := None[int]().IsNil()
 
-	if !m.IsNone() {
-		t.Errorf("IsNone() = %v, want %v", m.IsNone(), true)
+	if !got {
+		t.Errorf("IsNil() = %v, want %v", got, true)
 	}
 
-	val := 4
-	m2 := Nillable[int](&val)
+	got2 := Just(4).IsNil()
 
-	if m2.IsNone() {
-		t.Errorf("IsNone() = %v, want %v", m.IsNone(), false)
+	if got2 {
+		t.Errorf("IsNil() = %v, want %v", got2, false)
 	}
 }
 
 func TestMaybe_IsSome(t *testing.T) {
-	m := Nillable[int](nil)
+	got := Just(1).IsSome()
 
-	if m.IsSome() {
-		t.Errorf("IsSome() = %v, want %v", m.IsSome(), false)
+	if !got {
+		t.Errorf("IsSome() = %v, want %v", got, true)
 	}
 
-	val := 4
-	m2 := Nillable[int](&val)
+	got2 := None[int]().IsSome()
 
-	if !m2.IsSome() {
-		t.Errorf("IsSome() = %v, want %v", m.IsSome(), true)
+	if got2 {
+		t.Errorf("IsSome() = %v, want %v", got2, false)
 	}
 }
