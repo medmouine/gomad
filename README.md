@@ -2,6 +2,8 @@
 [![GitHub go.mod Go version of a Go module](https://github.com/medmouine/gomad/workflows/Go/badge.svg)](https://github.com/medmouine/gomad/actions/workflows/go.yml)
 [![Go Reference](https://pkg.go.dev/badge/github.com/medmouine/gomad/maybe.svg)](https://pkg.go.dev/github.com/medmouine/gomad/maybe)
 [![codecov](https://codecov.io/gh/medmouine/gomad/branch/main/graph/badge.svg?token=3DJBNCU1NG)](https://codecov.io/gh/medmouine/gomad)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 
 ### Functional Patterns in Golang
 # GOMAD
