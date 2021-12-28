@@ -19,12 +19,6 @@ func TestFromPredicate(t *testing.T) {
 		t.Errorf("gotRight %v, want %v", gotRight.Right(), 2)
 	}
 
-	gotRight.MapRight(func(i int) int { return i + 1 })
-
-	if !reflect.DeepEqual(gotRight.Right(), 3) {
-		t.Errorf("gotRight %v, want %v", gotRight.Right(), 2)
-	}
-
 	gotLeft := FromPredicate(func(i int) bool { return i%2 == 0 }, 3, "not even")
 
 	if !gotLeft.IsLeft() {
@@ -36,23 +30,17 @@ func TestFromPredicate(t *testing.T) {
 	if !reflect.DeepEqual(gotLeft.Left(), "not even") {
 		t.Errorf("gotLeft %v, want %v", gotLeft.Left(), "not even")
 	}
-
-	gotLeft.MapLeft(func(i string) string { return i + "foobar" })
-
-	if !reflect.DeepEqual(gotLeft.Left(), "not evenfoobar") {
-		t.Errorf("gotLeft %v, want %v", gotLeft.Left(), "not evenfoobar")
-	}
 }
 
 func TestEither_MapLeft(t *testing.T) {
 	left := Left("foo")
 
-	left.MapLeft(func(t string) string {
+	got := left.MapLeft(func(t string) string {
 		return t + "bar"
 	})
 
-	if !reflect.DeepEqual(left.Left(), "foobar") {
-		t.Errorf("MapLeft() = %v, want %v", left.Left(), "foobar")
+	if !reflect.DeepEqual(got.Left(), "foobar") {
+		t.Errorf("MapLeft() = %v, want %v", got.Left(), "foobar")
 	}
 
 	right := Right("foo")
@@ -90,13 +78,37 @@ func TestEither_MapRight(t *testing.T) {
 
 	right := Right("foo")
 
-	right.MapRight(func(t string) string {
+	got := right.MapRight(func(t string) string {
 		return t + "bar"
 	})
 
-	if !reflect.DeepEqual(right.Right(), "foobar") {
-		t.Errorf("MapRight() = %v, want %v", right.Right(), "foobar")
+	if !reflect.DeepEqual(got.Right(), "foobar") {
+		t.Errorf("MapRight() = %v, want %v", got.Right(), "foobar")
 	}
+}
+
+func TestEither_Left(t *testing.T) {
+	got := Left("foo").Left()
+
+	if !reflect.DeepEqual(got, "foo") {
+		t.Errorf("Left() = %v, want %v", got, "foo")
+	}
+
+	defer func() { recover() }()
+	Right("foo").Left()
+	t.Errorf("Left() on Right did not panic")
+}
+
+func TestEither_Right(t *testing.T) {
+	got := Right("foo").Right()
+
+	if !reflect.DeepEqual(got, "foo") {
+		t.Errorf("Right() = %v, want %v", got, "foo")
+	}
+
+	defer func() { recover() }()
+	Left("foo").Right()
+	t.Errorf("Right() on Left did not panic")
 }
 
 func TestEither_IfLeft(t *testing.T) {

@@ -56,18 +56,14 @@ func (e *either[L, R]) IsLeft() bool {
 
 func (e *either[L, R]) MapRight(f func(R) R) Either[L, R] {
 	if e.IsRight() {
-		r := e.right.Map(f)
-		e.right = r
-		return e
+		return newR[L, R](f(e.Right()))
 	}
 	return e
 }
 
 func (e *either[L, R]) MapLeft(f func(L) L) Either[L, R] {
 	if e.IsLeft() {
-		l := e.left.Map(f)
-		e.left = l
-		return e
+		return newL[L, R](f(e.Left()))
 	}
 	return e
 }

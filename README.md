@@ -11,7 +11,7 @@ Following is a list of future modules coming up in no specific order:
 
 - [X] Maybe
 - [X] Either
-- [ ] Result
+- [X] Result
 - [ ] List
 - [ ] Pipe
 - [ ] HKT
