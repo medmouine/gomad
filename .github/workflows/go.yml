@@ -7,6 +7,23 @@ on:
     branches: [ main ]
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          stable: 'false'
+          go-version: '1.18.0-beta1'
+      - name: Prepare
+        run: |
+          go get -u golang.org/x/lint/golint
+          go install golang.org/x/lint/golint
+      - name: Check
+        run: |
+          golint ./...
+          go vet ./...
+          gofmt -s -d -e .
   test:
     runs-on: ubuntu-latest
     steps:
@@ -20,16 +37,3 @@ jobs:
           go test -v ./... -coverprofile=coverage.txt -covermode=atomic
       - name: Upload coverage to Codecov
         run: bash <(curl -s https://codecov.io/bash)
-  check:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
-        with:
-          stable: 'false'
-          go-version: '1.18.0-beta1'
-      - name: GoGitOps Check
-        id: gogitops
-        uses: beaujr/gogitops-action@v0.2
-        with:
-          github-actions-token: ${{secrets.GOGITOPS_TOKEN}}
