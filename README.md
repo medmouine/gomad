@@ -46,7 +46,6 @@ go get github.com/medmouine/gomad/maybe
 
 ### Modules
 ## Maybe
-### Install
 ```
 go get github.com/medmouine/gomad/maybe
 ```
@@ -137,7 +136,6 @@ We get a `Person` with its `name` attribute equal to `foobar` which is the origi
 ------
 
 ## Either
-### Install
 ```
 go get github.com/medmouine/gomad/either
 ```
@@ -148,7 +146,6 @@ WIP 🚧
 ------
 
 ## Result
-### Install
 ```
 go get github.com/medmouine/gomad/result
 ```
