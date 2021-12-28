@@ -10,7 +10,7 @@
 Following is a list of future modules coming up in no specific order:
 
 - [X] Maybe
-- [ ] Either
+- [X] Either
 - [ ] Result
 - [ ] List
 - [ ] Pipe
@@ -57,3 +57,6 @@ TODO
 ```
 TODO
 ``` -->
+
+### Either
+
