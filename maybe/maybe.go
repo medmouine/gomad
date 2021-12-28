@@ -16,6 +16,7 @@ type Maybe[T any] interface {
 	Unwrap() T
 	Map(func(T) T) Maybe[T]
 	Apply(func(T)) Maybe[T]
+	Bind(func(T) Maybe[T]) Maybe[T]
 	IsSome() bool
 	IsNil() bool
 	OrElse(func() T) T
@@ -100,4 +101,11 @@ func (m maybe[T]) Or(val T) T {
 		return val
 	}
 	return m.Unwrap()
+}
+
+func (m maybe[T]) Bind(f func(T) Maybe[T]) Maybe[T] {
+	if m.IsSome() {
+		return f(m.Unwrap())
+	}
+	return None[T]()
 }

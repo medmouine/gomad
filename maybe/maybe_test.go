@@ -192,3 +192,22 @@ func TestMaybe_IsSome(t *testing.T) {
 		t.Errorf("IsSome() = %v, want %v", got2, false)
 	}
 }
+
+func TestMaybe_Bind(t *testing.T) {
+	got := Just(2).Bind(func(t int) Maybe[int] {
+		return Just(t * t)
+	})
+
+	if !reflect.DeepEqual(got, Just(4)) {
+		t.Errorf("Bind() = %v, want %v", got, Just(4))
+	}
+
+	got2 := None[int]().Bind(func(t int) Maybe[int] {
+		return Just(t * t)
+	})
+
+	if !reflect.DeepEqual(got2, None[int]()) {
+		t.Errorf("Bind() = %v, want %v", got2, None[int]())
+	}
+
+}
