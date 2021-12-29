@@ -84,7 +84,9 @@ someInt.
 if we give an alternative value, we still get the actual value since it's not `nil`.
 
 ```
-someInt.Or(99) // returns 4 (original value mapped)
+someInt.
+    Map(func(i int) int { return i + 1 }).
+    Or(99) // returns 4 (original value mapped)
 ```
 
 - ##### Example 3 Nillable Value (unsure if `nil` or not)
