@@ -1,10 +1,12 @@
 [![GitHub go.mod Go version of a Go module](https://img.shields.io/github/go-mod/go-version/medmouine/gomad.svg)](https://github.com/medmouine/gomad)
 [![Test](https://github.com/medmouine/gomad/workflows/Test/badge.svg)](https://github.com/medmouine/gomad/actions/workflows/test.yml)
 [![Lint](https://github.com/medmouine/gomad/workflows/Lint/badge.svg)](https://github.com/medmouine/gomad/actions/workflows/lint.yml)
-[![Go Reference](https://pkg.go.dev/badge/github.com/medmouine/gomad/maybe.svg)](https://pkg.go.dev/github.com/medmouine/gomad/maybe)
 [![codecov](https://codecov.io/gh/medmouine/gomad/branch/main/graph/badge.svg?token=3DJBNCU1NG)](https://codecov.io/gh/medmouine/gomad)
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+<!-- [![Go Reference](https://pkg.go.dev/badge/github.com/medmouine/gomad/maybe.svg)](https://pkg.go.dev/github.com/medmouine/gomad/maybe)
+ -->
 [![Maintainability](https://api.codeclimate.com/v1/badges/1eaa76225406955456d1/maintainability)](https://codeclimate.com/github/medmouine/gomad/maintainability)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/medmouine/gomad.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/medmouine/gomad/alerts/)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 <img src="./img/gomad-logo.png" alt="drawing" width="600"/>
 
