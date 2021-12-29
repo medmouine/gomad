@@ -24,6 +24,7 @@
 
 Following is a list of featured and upcoming modules in no specific order:
 
+- [X] Identity
 - [X] Eq
 - [X] Ord
 - [X] Semigroup
