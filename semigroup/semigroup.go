@@ -2,35 +2,12 @@ package semigroup
 
 import "github.com/medmouine/gomad/identity"
 
-type Semigroup[T any] interface {
+type ISemigroup[T any] interface {
 	Concat(T, T) T
-	Fold(init T) func(slice []T) T
-	FoldF() func(slice []T) T
-
-	FoldMap(fn func(T) T, init T) func(slice []T) T
-	FoldMapF(fn func(T) T) func(slice []T) T
-
-	FoldLeft(init T) func(slice []T) T
-	FoldLeftF() func(slice []T) T
-
-	FoldMapLeft(fn func(T) T, init T) func(slice []T) T
-	FoldMapLeftF(fn func(T) T) func(slice []T) T
-}
-
-type semigroup[T any] struct {
-	concat func(T, T) T
 }
 
 func FromConcat[T any](concat func(T, T) T) Semigroup[T] {
-	return &semigroup[T]{concat}
-}
-
-func Reverse[T any](sg Semigroup[T]) Semigroup[T] {
-	return semigroup[T]{
-		func(a T, b T) T {
-			return sg.Concat(b, a)
-		},
-	}
+	return Semigroup[T]{concat: concat}
 }
 
 func Fold[T any](sg Semigroup[T], init T) func([]T) T {
@@ -75,40 +52,4 @@ func FoldMapLeft[T any](sg Semigroup[T], f func(T) T, init T) func([]T) T {
 
 func FoldMapLeftF[T any](sg Semigroup[T], f func(T) T) func([]T) T {
 	return FoldMapF(Reverse(sg), f)
-}
-
-func (s semigroup[T]) Concat(a T, b T) T {
-	return s.concat(a, b)
-}
-
-func (s semigroup[T]) Fold(init T) func([]T) T {
-	return Fold[T](s, init)
-}
-
-func (s semigroup[T]) FoldF() func([]T) T {
-	return FoldF[T](s)
-}
-
-func (s semigroup[T]) FoldMap(f func(T) T, init T) func([]T) T {
-	return FoldMap[T](s, f, init)
-}
-
-func (s semigroup[T]) FoldMapF(f func(T) T) func([]T) T {
-	return FoldMapF[T](s, f)
-}
-
-func (s semigroup[T]) FoldLeft(init T) func([]T) T {
-	return FoldLeft[T](s, init)
-}
-
-func (s semigroup[T]) FoldLeftF() func([]T) T {
-	return FoldLeftF[T](s)
-}
-
-func (s semigroup[T]) FoldMapLeft(f func(T) T, init T) func([]T) T {
-	return FoldMapLeft[T](s, f, init)
-}
-
-func (s semigroup[T]) FoldMapLeftF(f func(T) T) func([]T) T {
-	return FoldMapLeftF[T](s, f)
 }
