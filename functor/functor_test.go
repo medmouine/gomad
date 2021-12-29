@@ -48,3 +48,17 @@ func TestMap(t *testing.T) {
 		t.Errorf("Map(identity.Identity) failed")
 	}
 }
+
+func TestFunctor_Map(t *testing.T) {
+	intFunctor := Functor[int]{
+		val: 1,
+	}
+
+	got := intFunctor.Map(func(i int) int {
+		return 5
+	})
+
+	if got.val != 5 {
+		t.Errorf("Map(intToString) failed")
+	}
+}

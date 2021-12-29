@@ -21,3 +21,9 @@ func Map[T any, U any](fa Functor[T], f func(T) U) Functor[U] {
 		val: f(fa.val),
 	}
 }
+
+func (fa Functor[T]) Map(f func(T) T) Functor[T] {
+	return Functor[T]{
+		val: f(fa.val),
+	}
+}
