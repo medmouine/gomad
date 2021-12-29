@@ -37,7 +37,6 @@ Following is a list of featured and upcoming modules in no specific order:
 - [ ] Pipe
 - [ ] HKT
 - [ ] Monad
-- [ ] IO
 - [ ] Task
 - [ ] Reader
 
