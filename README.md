@@ -21,6 +21,10 @@
 
 Following is a list of future modules coming up in no specific order:
 
+- [X] Eq
+- [X] Ord
+- [X] Semigroup
+- [X] IO
 - [X] Maybe
 - [X] Either
 - [X] Result
