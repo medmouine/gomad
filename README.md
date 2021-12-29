@@ -4,6 +4,7 @@
 [![Go Reference](https://pkg.go.dev/badge/github.com/medmouine/gomad/maybe.svg)](https://pkg.go.dev/github.com/medmouine/gomad/maybe)
 [![codecov](https://codecov.io/gh/medmouine/gomad/branch/main/graph/badge.svg?token=3DJBNCU1NG)](https://codecov.io/gh/medmouine/gomad)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Maintainability](https://api.codeclimate.com/v1/badges/1eaa76225406955456d1/maintainability)](https://codeclimate.com/github/medmouine/gomad/maintainability)
 
 <img src="./img/gomad-logo.png" alt="drawing" width="600"/>
 
