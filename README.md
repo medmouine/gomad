@@ -30,6 +30,7 @@ Following is a list of featured and upcoming modules in no specific order:
 - [X] Semigroup
 - [X] Monoid
 - [X] IO
+- [X] Functor
 - [X] Maybe
 - [X] Either
 - [X] Result

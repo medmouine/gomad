@@ -131,6 +131,16 @@ func TestFold(t *testing.T) {
 	if m([]string{"b", "c"}) != "abc" {
 		t.Errorf("Expected %s, got %s", m([]string{"b", "c"}), "abc")
 	}
+
+	sum := func(a, b int) int {
+		return a + b
+	}
+
+	m2 := Fold(FromConcat(sum, 0))
+
+	if m2([]int{1, 2, 3}) != 6 {
+		t.Errorf("Expected %d, got %d", m2([]int{1, 2, 3}), 6)
+	}
 }
 
 func TestFoldLeft(t *testing.T) {

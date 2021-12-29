@@ -1,7 +1,6 @@
 package semigroup
 
 type Semigroup[T any] struct {
-	ISemigroup[T]
 	concat func(T, T) T
 }
 
