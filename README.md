@@ -20,7 +20,7 @@
   * [Result](#result)
 
 
-### This package is still in an early stage of development. Feel free to open a PR and contribute or just open an issue to help me priorities features.
+### This package is still in an early stage of development. Feel free to open a PR and contribute or just open an issue to help me prioritize features.
 
 Following is a list of featured and upcoming modules in no specific order:
 
