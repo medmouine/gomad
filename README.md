@@ -31,13 +31,16 @@ Following is a list of featured and upcoming modules in no specific order:
 - [X] Monoid
 - [X] IO
 - [X] Functor
+- [ ] Apply
+- [ ] Applicative
+- [ ] Monad
+- [ ] Chain
 - [X] Maybe
 - [X] Either
 - [X] Result
 - [ ] List
 - [ ] Pipe
 - [ ] HKT
-- [ ] Monad
 - [ ] Task
 - [ ] Reader
 
