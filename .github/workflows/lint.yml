@@ -14,7 +14,7 @@ jobs:
       - uses: actions/setup-go@v2
         with:
           stable: 'false'
-          go-version: '1.18.0-beta1'
+          go-version: '1.18.4'
       - name: Prepare
         run: |
           go get -u golang.org/x/lint/golint

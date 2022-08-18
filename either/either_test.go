@@ -281,8 +281,8 @@ func TestEither_MaybeLeft(t *testing.T) {
 	if !got.IsSome() {
 		t.Errorf("MaybeLeft() = %v, want %v", got.IsSome(), true)
 
-		if !reflect.DeepEqual(got.Unwrap(), "foo") {
-			t.Errorf("MaybeLeft() = %v, want %v", got.Unwrap(), "foo")
+		if !reflect.DeepEqual(*got.Unwrap(), "foo") {
+			t.Errorf("MaybeLeft() = %v, want %v", *got.Unwrap(), "foo")
 		}
 	}
 
@@ -301,8 +301,8 @@ func TestEither_MaybeRight(t *testing.T) {
 	if !got.IsSome() {
 		t.Errorf("MaybeRight() = %v, want %v", got.IsSome(), true)
 
-		if !reflect.DeepEqual(got.Unwrap(), "foo") {
-			t.Errorf("MaybeRight() = %v, want %v", got.Unwrap(), "foo")
+		if !reflect.DeepEqual(*got.Unwrap(), "foo") {
+			t.Errorf("MaybeRight() = %v, want %v", *got.Unwrap(), "foo")
 		}
 	}
 

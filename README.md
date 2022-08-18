@@ -10,8 +10,6 @@
 
 <img src="./img/gomad-logo.png" alt="drawing" width="600"/>
 
-Note: The package is currently available on pkg.go.dev and ready to use with Golang 1.18-alpha. I am waiting for the stable release of v1.18 to officially release Gomad v1.0.0.
-
 # **GOMAD**: Functional Patterns in Golang
 - [Prerequisites](#prerequisites)
 - [Install](#install)

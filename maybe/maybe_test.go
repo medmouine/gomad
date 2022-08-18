@@ -13,8 +13,8 @@ func TestMaybe_Just(t *testing.T) {
 	integer := 123
 	gotInt := Just(integer)
 
-	if !reflect.DeepEqual(gotInt.Unwrap(), integer) {
-		t.Errorf("Just() = %v, want %v", gotInt.Unwrap(), integer)
+	if !reflect.DeepEqual(*gotInt.Unwrap(), integer) {
+		t.Errorf("Just() = %v, want %v", *gotInt.Unwrap(), integer)
 	}
 
 	if !reflect.DeepEqual(gotInt.IsNil(), false) {
@@ -24,15 +24,15 @@ func TestMaybe_Just(t *testing.T) {
 	_string := "abc"
 	gotStr := Just(_string)
 
-	if !reflect.DeepEqual(gotStr.Unwrap(), _string) {
-		t.Errorf("Just() = %v, want %v", gotStr.Unwrap(), _string)
+	if !reflect.DeepEqual(*gotStr.Unwrap(), _string) {
+		t.Errorf("Just() = %v, want %v", *gotStr.Unwrap(), _string)
 	}
 
 	_slice := []int{1, 2, 3}
 	gotSlice := Just(_slice)
 
-	if !reflect.DeepEqual(gotSlice.Unwrap(), _slice) {
-		t.Errorf("Just() = %v, want %v", gotSlice.Unwrap(), _slice)
+	if !reflect.DeepEqual(*gotSlice.Unwrap(), _slice) {
+		t.Errorf("Just() = %v, want %v", *gotSlice.Unwrap(), _slice)
 	}
 }
 
@@ -49,14 +49,14 @@ func TestMaybe_Of(t *testing.T) {
 	t.Parallel()
 
 	integer := 123
-	gotInteger := Of(&integer)
+	gotInt := Of(&integer)
 
-	if !reflect.DeepEqual(gotInteger.Unwrap(), integer) {
-		t.Errorf("Of() = %v, want %v", gotInteger.Unwrap(), integer)
+	if !reflect.DeepEqual(*gotInt.Unwrap(), integer) {
+		t.Errorf("Of() = %v, want %v", *gotInt.Unwrap(), integer)
 	}
 
-	if gotInteger.IsNil() {
-		t.Errorf("Of() = %v, want %v", gotInteger.IsNil(), false)
+	if gotInt.IsNil() {
+		t.Errorf("Of() = %v, want %v", gotInt.IsNil(), false)
 	}
 
 	gotNil := Of[int](nil)
@@ -82,8 +82,8 @@ func TestMaybe_Apply(t *testing.T) {
 		t.Errorf("Apply() called = %v, want %v", called, true)
 	}
 
-	if !reflect.DeepEqual(m.Unwrap(), integer) {
-		t.Errorf("Apply() = %v, want %v", m.Unwrap(), integer)
+	if !reflect.DeepEqual(*m.Unwrap(), integer) {
+		t.Errorf("Apply() = %v, want %v", *m.Unwrap(), integer)
 	}
 
 	called2 := false
@@ -103,8 +103,8 @@ func TestMaybe_Map(t *testing.T) {
 	got := Just(1).Map(func(v int) int {
 		return v + 3
 	})
-	if !reflect.DeepEqual(got.Unwrap(), 4) {
-		t.Errorf("Map() = %v, want %v", got.Unwrap(), 4)
+	if !reflect.DeepEqual(*got.Unwrap(), 4) {
+		t.Errorf("Map() = %v, want %v", *got.Unwrap(), 4)
 	}
 
 	if !got.IsSome() {
@@ -122,8 +122,8 @@ func TestMaybe_Map(t *testing.T) {
 func TestMaybe_Unwrap(t *testing.T) {
 	t.Parallel()
 
-	if got := Just(1).Unwrap(); !reflect.DeepEqual(got, 1) {
-		t.Errorf("Unwrap() = %v, want %v", got, 1)
+	if got := Just(1).Unwrap(); !reflect.DeepEqual(*got, 1) {
+		t.Errorf("Unwrap() = %v, want %v", *got, 1)
 	}
 
 	defer func() {
@@ -141,27 +141,27 @@ func TestMaybe_OrElse(t *testing.T) {
 	got := None[int]().OrElse(func() int {
 		return 3
 	})
-	if !reflect.DeepEqual(got, 3) {
-		t.Errorf("OrElse() = %v, want %v", got, 3)
+	if !reflect.DeepEqual(*got, 3) {
+		t.Errorf("OrElse() = %v, want %v", *got, 3)
 	}
 
 	got2 := Just(1).OrElse(func() int {
 		return 3
 	})
-	if !reflect.DeepEqual(got2, 1) {
-		t.Errorf("OrElse() = %v, want %v", got2, 1)
+	if !reflect.DeepEqual(*got2, 1) {
+		t.Errorf("OrElse() = %v, want %v", *got2, 1)
 	}
 }
 
 func TestMaybe_Or(t *testing.T) {
 	t.Parallel()
 
-	if got := None[int]().Or(3); !reflect.DeepEqual(got, 3) {
-		t.Errorf("Or() = %v, want %v", got, 3)
+	if got := None[int]().Or(3); !reflect.DeepEqual(*got, 3) {
+		t.Errorf("Or() = %v, want %v", *got, 3)
 	}
 
-	if got2 := Just(1).Or(3); !reflect.DeepEqual(got2, 1) {
-		t.Errorf("Or() = %v, want %v", got2, 1)
+	if got2 := Just(1).Or(3); !reflect.DeepEqual(*got2, 1) {
+		t.Errorf("Or() = %v, want %v", *got2, 1)
 	}
 }
 

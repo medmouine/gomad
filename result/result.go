@@ -50,7 +50,9 @@ func FromMaybe[T any](m maybe.Maybe[T], err error) Result[T] {
 	if m.IsNil() {
 		return Err[T](err)
 	}
-	return Ok(m.Unwrap())
+
+	v := m.Unwrap()
+	return Ok[T](*v)
 }
 
 /*

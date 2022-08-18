@@ -98,6 +98,7 @@ func (m maybe[T]) IsNil() bool {
 func (m maybe[T]) OrElse(f func() T) *T {
 	if m.IsNil() {
 		v := f()
+
 		return &v
 	}
 
