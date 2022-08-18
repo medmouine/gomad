@@ -1,8 +1,14 @@
-package eq
+package eq_test
 
-import "testing"
+import (
+	"testing"
+
+	. "github.com/medmouine/gomad/eq"
+)
 
 func TestFromEquals(t *testing.T) {
+	t.Parallel()
+
 	intEq := func(x int, y int) bool { return x == y }
 
 	got := FromEquals(intEq)
@@ -17,12 +23,15 @@ type Person struct {
 }
 
 func Test_eq_Equals(t *testing.T) {
+	t.Parallel()
+
 	intEq := func(x int, y int) bool { return x == y }
 	got := FromEquals(intEq)
 
 	if got.Equals(1, 2) {
 		t.Errorf("eq.Equals() = %v, want %v", got.Equals(1, 2), false)
 	}
+
 	if !got.Equals(1, 1) {
 		t.Errorf("eq.Equals() = %v, want %v", got.Equals(1, 1), true)
 	}
@@ -33,6 +42,7 @@ func Test_eq_Equals(t *testing.T) {
 	if got2.Equals("a", "b") {
 		t.Errorf("eq.Equals() = %v, want %v", got2.Equals("a", "b"), false)
 	}
+
 	if !got2.Equals("a", "a") {
 		t.Errorf("eq.Equals() = %v, want %v", got2.Equals("a", "a"), true)
 	}

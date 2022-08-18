@@ -1,8 +1,9 @@
 package monoid
 
 import (
-	"github.com/medmouine/gomad/semigroup"
 	"testing"
+
+	"github.com/medmouine/gomad/semigroup"
 )
 
 func TestFromConcat(t *testing.T) {

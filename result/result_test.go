@@ -2,9 +2,10 @@ package result
 
 import (
 	"errors"
-	"github.com/medmouine/gomad/maybe"
 	"reflect"
 	"testing"
+
+	"github.com/medmouine/gomad/maybe"
 )
 
 func TestOk(t *testing.T) {
@@ -100,7 +101,7 @@ func TestResult_Err(t *testing.T) {
 }
 
 func TestResult_IfErr(t *testing.T) {
-	var called = false
+	called := false
 	Err[int](errors.New("error")).IfErr(func(err error) {
 		called = true
 	})
@@ -109,7 +110,7 @@ func TestResult_IfErr(t *testing.T) {
 		t.Errorf("IfErr() = %v, want %v", called, true)
 	}
 
-	var called2 = false
+	called2 := false
 	Ok(1).IfErr(func(err error) {
 		called2 = true
 	})
@@ -120,7 +121,7 @@ func TestResult_IfErr(t *testing.T) {
 }
 
 func TestResult_IfOk(t *testing.T) {
-	var called = false
+	called := false
 	Err[int](errors.New("error")).IfOk(func(i int) {
 		called = true
 	})
@@ -129,7 +130,7 @@ func TestResult_IfOk(t *testing.T) {
 		t.Errorf("IfOk() = %v, want %v", called, false)
 	}
 
-	var called2 = false
+	called2 := false
 	Ok(1).IfOk(func(i int) {
 		called2 = true
 	})

@@ -1,64 +1,68 @@
-package functor
+package functor_test
 
 import (
-	"github.com/medmouine/gomad/identity"
 	"strconv"
 	"testing"
+
+	. "github.com/medmouine/gomad/functor"
+	"github.com/medmouine/gomad/identity"
 )
 
 func TestLift(t *testing.T) {
-	intToString := func(i int) string {
-		return strconv.Itoa(i)
-	}
+	t.Parallel()
+
+	intToString := strconv.Itoa
 	got := Lift(intToString)
 
 	intFunctor := Functor[int]{
-		val: 1,
+		Val: 1,
 	}
 
-	if got(intFunctor).val != "1" {
+	if got(intFunctor).Val != "1" {
 		t.Errorf("Lift(intToString) failed")
 	}
 
 	got2 := Lift(identity.Identity[int])
 
-	if got2(intFunctor).val != 1 {
+	if got2(intFunctor).Val != 1 {
 		t.Errorf("Lift(identity.Identity) failed")
 	}
 }
 
 func TestMap(t *testing.T) {
-	intToString := func(i int) string {
-		return strconv.Itoa(i)
-	}
+	t.Parallel()
+
+	intToString := strconv.Itoa
 
 	intFunctor := Functor[int]{
-		val: 1,
+		Val: 1,
 	}
 
 	got := Map(intFunctor, intToString)
 
-	if got.val != "1" {
+	if got.Val != "1" {
 		t.Errorf("Map(intToString) failed")
 	}
 
 	got2 := Map(intFunctor, identity.Identity[int])
 
-	if got2.val != 1 {
+	if got2.Val != 1 {
 		t.Errorf("Map(identity.Identity) failed")
 	}
 }
 
 func TestFunctor_Map(t *testing.T) {
+	t.Parallel()
+
 	intFunctor := Functor[int]{
-		val: 1,
+		Val: 1,
 	}
 
 	got := intFunctor.Map(func(i int) int {
 		return 5
 	})
 
-	if got.val != 5 {
+	if got.Val != 5 {
 		t.Errorf("Map(intToString) failed")
 	}
 }

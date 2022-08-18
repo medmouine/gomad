@@ -1,29 +1,38 @@
 package either
 
-import "go/types"
-
-type left[L any, R any] struct {
-	*either[L, R]
+type left[L, R any] struct {
+	Either[L, R]
 	val L
 }
 
-func newL[L any, R any](val L) *left[L, R] {
-	l := &left[L, R]{
-		val: val,
+func newL[L, R any](val L) Either[L, R] {
+	l := new(left[L, R])
+	l.val = val
+	l.Either = &either[L, R]{
+		Either: l,
 	}
 
-	l.either = &either[L, R]{
-		Either: l,
-		left:   l,
-	}
 	return l
 }
 
 /*
 Left returns a new Either value with Left as the passed argument.
+By default, the Right Type is the same as the Left Type.
 */
-func Left[L any](value L) Either[L, types.Nil] {
-	return newL[L, types.Nil](value)
+func Left[L any](value L) Either[L, L] {
+	return newL[L, L](value)
+}
+
+func (l left[L, R]) Left() *L {
+	return &l.val
+}
+
+func (l left[L, R]) Right() *R {
+	panic(any("called Right on Left"))
+}
+
+func (l left[L, R]) IsLeft() bool {
+	return true
 }
 
 func (l left[L, R]) IsRight() bool {

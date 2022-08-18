@@ -8,25 +8,34 @@ type nillable interface {
 
 /*
 Maybe is a monadic pattern allowing for data manipulation while abstracting whether the value actually exists or is nil.
-For example, if we fetch data from an external API that could be nil, we can still perform manipulation on it while disregarding its actual state.
-The Maybe struct will take care of managing the value itself. This is similar to the Maybe interface in Elm or Haskell or Optional in Java.
+For example, if we fetch data from an external API that could be nil, we can still perform manipulation on it while
+disregarding its actual state. The Maybe struct will take care of managing the value itself. This is similar to
+the Maybe interface in Elm or Haskell or Optional in Java.
 This is helpful for CRUD operations by simplifying the code and allowing for seamless manipulation of nullable data.
 */
 type Maybe[T any] interface {
-	Unwrap() T
+	Unwrap() *T
 	Map(func(T) T) Maybe[T]
 	Apply(func(T)) Maybe[T]
 	Bind(func(T) Maybe[T]) Maybe[T]
 	IsSome() bool
 	IsNil() bool
-	OrElse(func() T) T
-	Or(T) T
+	OrElse(func() T) *T
+	Or(T) *T
 	OrNil() *T
 }
 
 type maybe[T any] struct {
 	Maybe[T]
 	val *T
+}
+
+func Map[T2, T any](m Maybe[T], f func(T) T2) Maybe[T2] {
+	if m.IsSome() {
+		return Just(f(*m.Unwrap()))
+	}
+
+	return None[T2]()
 }
 
 /*
@@ -36,6 +45,7 @@ func Of[T nillable](val *T) Maybe[T] {
 	if val == nil {
 		return maybe[T]{val: nil}
 	}
+
 	return maybe[T]{val: val}
 }
 
@@ -53,10 +63,11 @@ func None[T nillable]() Maybe[T] {
 	return maybe[T]{val: nil}
 }
 
-func (m maybe[T]) Unwrap() T {
+func (m maybe[T]) Unwrap() *T {
 	if m.IsSome() {
-		return *m.val
+		return m.val
 	}
+
 	panic(any("unwrap of empty Maybe"))
 }
 
@@ -64,13 +75,15 @@ func (m maybe[T]) Map(f func(T) T) Maybe[T] {
 	if m.IsSome() {
 		return Just(f(*m.val))
 	}
+
 	return m
 }
 
 func (m maybe[T]) Apply(f func(x T)) Maybe[T] {
 	if m.IsSome() {
-		f(m.Unwrap())
+		f(*m.Unwrap())
 	}
+
 	return m
 }
 
@@ -82,10 +95,12 @@ func (m maybe[T]) IsNil() bool {
 	return m.val == nil
 }
 
-func (m maybe[T]) OrElse(f func() T) T {
+func (m maybe[T]) OrElse(f func() T) *T {
 	if m.IsNil() {
-		return f()
+		v := f()
+		return &v
 	}
+
 	return m.Unwrap()
 }
 
@@ -93,19 +108,22 @@ func (m maybe[T]) OrNil() *T {
 	if m.IsNil() {
 		return nil
 	}
+
 	return m.val
 }
 
-func (m maybe[T]) Or(val T) T {
+func (m maybe[T]) Or(val T) *T {
 	if m.IsNil() {
-		return val
+		return &val
 	}
+
 	return m.Unwrap()
 }
 
 func (m maybe[T]) Bind(f func(T) Maybe[T]) Maybe[T] {
 	if m.IsSome() {
-		return f(m.Unwrap())
+		return f(*m.Unwrap())
 	}
+
 	return None[T]()
 }

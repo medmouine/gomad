@@ -20,7 +20,7 @@ func FoldF[T any](sg Semigroup[T]) func([]T) T {
 
 func FoldMap[T any](sg Semigroup[T], f func(T) T, init T) func([]T) T {
 	return func(xs []T) T {
-		var acc = f(init)
+		acc := f(init)
 		for _, x := range xs {
 			acc = sg.Concat(acc, f(x))
 		}
@@ -30,7 +30,7 @@ func FoldMap[T any](sg Semigroup[T], f func(T) T, init T) func([]T) T {
 
 func FoldMapF[T any](sg Semigroup[T], f func(T) T) func([]T) T {
 	return func(xs []T) T {
-		var acc = f(xs[0])
+		acc := f(xs[0])
 		for _, x := range xs[1:] {
 			acc = sg.Concat(acc, f(x))
 		}

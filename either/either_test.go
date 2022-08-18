@@ -1,58 +1,65 @@
-package either
+package either_test
 
 import (
-	"go/types"
 	"reflect"
 	"testing"
+
+	. "github.com/medmouine/gomad/either"
 )
 
 func TestFromPredicate(t *testing.T) {
-	gotRight := FromPredicate(func(i int) bool { return i%2 == 0 }, 2, "not even")
+	t.Parallel()
 
+	gotRight := FromPredicate(func(i int) bool { return i%2 == 0 }, 2, "not even")
 	if gotRight.IsLeft() {
 		t.Errorf("gotRight isLeft %v, want %v", gotRight.IsLeft(), false)
 	}
+
 	if !gotRight.IsRight() {
 		t.Errorf("gotRight isRight %v, want %v", gotRight.IsRight(), true)
 	}
-	if !reflect.DeepEqual(gotRight.Right(), 2) {
-		t.Errorf("gotRight %v, want %v", gotRight.Right(), 2)
+
+	if !reflect.DeepEqual(*gotRight.Right(), 2) {
+		t.Errorf("gotRight %v, want %v", *gotRight.Right(), 2)
 	}
 
 	gotLeft := FromPredicate(func(i int) bool { return i%2 == 0 }, 3, "not even")
-
 	if !gotLeft.IsLeft() {
 		t.Errorf("gotLeft isLeft %v, want %v", gotLeft.IsLeft(), true)
 	}
+
 	if gotLeft.IsRight() {
 		t.Errorf("gotLeft isRight %v, want %v", gotLeft.IsRight(), false)
 	}
-	if !reflect.DeepEqual(gotLeft.Left(), "not even") {
-		t.Errorf("gotLeft %v, want %v", gotLeft.Left(), "not even")
+
+	if !reflect.DeepEqual(*gotLeft.Left(), "not even") {
+		t.Errorf("gotLeft %v, want %v", *gotLeft.Left(), "not even")
 	}
 }
 
 func TestEither_MapLeft(t *testing.T) {
-	left := Left("foo")
+	t.Parallel()
 
-	got := left.MapLeft(func(t string) string {
+	left := Left("foo")
+	got := MapLeft(left, func(t string) string {
 		return t + "bar"
 	})
 
-	if !reflect.DeepEqual(got.Left(), "foobar") {
-		t.Errorf("MapLeft() = %v, want %v", got.Left(), "foobar")
+	if !reflect.DeepEqual(*got.Left(), "foobar") {
+		t.Errorf("MapLeft() = %v, want %v", *got.Left(), "foobar")
 	}
 
 	right := Right("foo")
+	called := false
 
-	var called = false
-	right.MapLeft(func(t types.Nil) types.Nil {
+	MapLeft(right, func(t string) string {
 		called = true
+
 		return t
 	})
 
-	if !reflect.DeepEqual(right.Right(), "foo") {
-		t.Errorf("MapLeft() = %v, want %v", right.Right(), "foo")
+	if !reflect.DeepEqual(*right.Right(), "foo") {
+		t.Errorf("MapLeft() = %v, want %v", *right.Right(), "foo")
 	}
 
 	if !reflect.DeepEqual(called, false) {
@@ -61,60 +68,41 @@ func TestEither_MapLeft(t *testing.T) {
 }
 
 func TestEither_MapRight(t *testing.T) {
-	left := Left("foo")
+	t.Parallel()
 
-	var called = false
-	left.MapRight(func(t types.Nil) types.Nil {
+	left := Left("foo")
+	called := false
+
+	MapRight(left, func(t string) string {
 		called = true
+
 		return t
 	})
 
-	if !reflect.DeepEqual(left.Left(), "foo") {
-		t.Errorf("MapRight() = %v, want %v", left.Left(), "foo")
+	if !reflect.DeepEqual(*left.Left(), "foo") {
+		t.Errorf("MapRight() = %v, want %v", *left.Left(), "foo")
 	}
+
 	if !reflect.DeepEqual(called, false) {
 		t.Errorf("MapRight() = %v, want %v", called, false)
 	}
 
 	right := Right("foo")
-
-	got := right.MapRight(func(t string) string {
-		return t + "bar"
+	got := MapRight(right, func(t string) int {
+		return 123
 	})
 
-	if !reflect.DeepEqual(got.Right(), "foobar") {
-		t.Errorf("MapRight() = %v, want %v", got.Right(), "foobar")
+	if !reflect.DeepEqual(*got.Right(), 123) {
+		t.Errorf("MapRight() = %v, want %v", *got.Right(), 123)
 	}
-}
-
-func TestEither_Left(t *testing.T) {
-	got := Left("foo").Left()
-
-	if !reflect.DeepEqual(got, "foo") {
-		t.Errorf("Left() = %v, want %v", got, "foo")
-	}
-
-	defer func() { recover() }()
-	Right("foo").Left()
-	t.Errorf("Left() on Right did not panic")
-}
-
-func TestEither_Right(t *testing.T) {
-	got := Right("foo").Right()
-
-	if !reflect.DeepEqual(got, "foo") {
-		t.Errorf("Right() = %v, want %v", got, "foo")
-	}
-
-	defer func() { recover() }()
-	Left("foo").Right()
-	t.Errorf("Right() on Left did not panic")
 }
 
 func TestEither_IfLeft(t *testing.T) {
-	left := Left("foo")
+	t.Parallel()
 
-	var called = false
+	left := Left("foo")
+	called := false
+
 	left.IfLeft(func(t string) {
 		called = true
 	})
@@ -123,8 +111,9 @@ func TestEither_IfLeft(t *testing.T) {
 		t.Errorf("IfLeft() called = %v, want %v", called, true)
 	}
 
-	var called2 = false
-	newR[string, string]("foo").IfLeft(func(t string) {
+	called2 := false
+
+	Right("foo").IfLeft(func(_ string) {
 		called2 = true
 	})
 
@@ -134,9 +123,11 @@ func TestEither_IfLeft(t *testing.T) {
 }
 
 func TestEither_IfRight(t *testing.T) {
-	right := Right("foo")
+	t.Parallel()
 
-	var called = false
+	right := Right("foo")
+	called := false
+
 	right.IfRight(func(t string) {
 		called = true
 	})
@@ -145,8 +136,9 @@ func TestEither_IfRight(t *testing.T) {
 		t.Errorf("IfRight() called = %v, want %v", called, true)
 	}
 
-	var called2 = false
-	newL[string, string]("foo").IfRight(func(t string) {
+	called2 := false
+
+	Left("foo").IfRight(func(t string) {
 		called2 = true
 	})
 
@@ -156,13 +148,14 @@ func TestEither_IfRight(t *testing.T) {
 }
 
 func TestEither_LeftOr(t *testing.T) {
-	got := Left("foo").LeftOr("bar")
+	t.Parallel()
 
+	got := *(Left("foo").LeftOr("bar"))
 	if !reflect.DeepEqual(got, "foo") {
 		t.Errorf("LeftOr() = %v, want %v", got, "foo")
 	}
 
-	got2 := newR[string, string]("foo").LeftOr("bar")
+	got2 := *(Right("foo").LeftOr("bar"))
 
 	if !reflect.DeepEqual(got2, "bar") {
 		t.Errorf("LeftOr() = %v, want %v", got2, "bar")
@@ -170,13 +163,14 @@ func TestEither_LeftOr(t *testing.T) {
 }
 
 func TestEither_RightOr(t *testing.T) {
-	got := Right("foo").RightOr("bar")
+	t.Parallel()
 
+	got := *(Right("foo").RightOr("bar"))
 	if !reflect.DeepEqual(got, "foo") {
 		t.Errorf("RightOr() = %v, want %v", got, "foo")
 	}
 
-	got2 := newL[string, string]("foo").RightOr("bar")
+	got2 := *(Left("foo").RightOr("bar"))
 
 	if !reflect.DeepEqual(got2, "bar") {
 		t.Errorf("RightOr() = %v, want %v", got2, "bar")
@@ -184,19 +178,21 @@ func TestEither_RightOr(t *testing.T) {
 }
 
 func TestEither_LeftOrElse(t *testing.T) {
+	t.Parallel()
+
 	left := Left("foo")
 
-	got := left.LeftOrElse(func() string {
+	got := *(left.LeftOrElse(func() string {
 		return "bar"
-	})
+	}))
 
 	if !reflect.DeepEqual(got, "foo") {
 		t.Errorf("LeftOrElse() = %v, want %v", got, "foo")
 	}
 
-	got2 := newR[string, string]("foo").LeftOrElse(func() string {
+	got2 := *(Right("foo").LeftOrElse(func() string {
 		return "bar"
-	})
+	}))
 
 	if !reflect.DeepEqual(got2, "bar") {
 		t.Errorf("LeftOrElse() = %v, want %v", got2, "bar")
@@ -204,19 +200,21 @@ func TestEither_LeftOrElse(t *testing.T) {
 }
 
 func TestEither_RightOrElse(t *testing.T) {
+	t.Parallel()
+
 	right := Right("foo")
 
-	got := right.RightOrElse(func() string {
+	got := *(right.RightOrElse(func() string {
 		return "bar"
-	})
+	}))
 
 	if !reflect.DeepEqual(got, "foo") {
 		t.Errorf("RightOrElse() = %v, want %v", got, "foo")
 	}
 
-	got2 := newL[string, string]("foo").RightOrElse(func() string {
+	got2 := *(Left("foo").RightOrElse(func() string {
 		return "bar"
-	})
+	}))
 
 	if !reflect.DeepEqual(got2, "bar") {
 		t.Errorf("RightOrElse() = %v, want %v", got2, "bar")
@@ -224,9 +222,12 @@ func TestEither_RightOrElse(t *testing.T) {
 }
 
 func TestEither_IfNotLeft(t *testing.T) {
+	t.Parallel()
+
 	left := Left("foo")
 
-	var called = false
+	called := false
+
 	left.IfNotLeft(func() {
 		called = true
 	})
@@ -235,8 +236,9 @@ func TestEither_IfNotLeft(t *testing.T) {
 		t.Errorf("IfNotLeft() called = %v, want %v", called, false)
 	}
 
-	var called2 = false
-	newR[string, string]("foo").IfNotLeft(func() {
+	called2 := false
+
+	Right("foo").IfNotLeft(func() {
 		called2 = true
 	})
 
@@ -246,9 +248,12 @@ func TestEither_IfNotLeft(t *testing.T) {
 }
 
 func TestEither_IfNotRight(t *testing.T) {
+	t.Parallel()
+
 	right := Right("foo")
 
-	var called = false
+	called := false
+
 	right.IfNotRight(func() {
 		called = true
 	})
@@ -257,8 +262,9 @@ func TestEither_IfNotRight(t *testing.T) {
 		t.Errorf("IfNotRight() called = %v, want %v", called, false)
 	}
 
-	var called2 = false
-	newL[string, string]("foo").IfNotRight(func() {
+	called2 := false
+
+	Left("foo").IfNotRight(func() {
 		called2 = true
 	})
 
@@ -268,10 +274,13 @@ func TestEither_IfNotRight(t *testing.T) {
 }
 
 func TestEither_MaybeLeft(t *testing.T) {
+	t.Parallel()
+
 	got := Left("foo").MaybeLeft()
 
 	if !got.IsSome() {
 		t.Errorf("MaybeLeft() = %v, want %v", got.IsSome(), true)
+
 		if !reflect.DeepEqual(got.Unwrap(), "foo") {
 			t.Errorf("MaybeLeft() = %v, want %v", got.Unwrap(), "foo")
 		}
@@ -285,10 +294,13 @@ func TestEither_MaybeLeft(t *testing.T) {
 }
 
 func TestEither_MaybeRight(t *testing.T) {
+	t.Parallel()
+
 	got := Right("foo").MaybeRight()
 
 	if !got.IsSome() {
 		t.Errorf("MaybeRight() = %v, want %v", got.IsSome(), true)
+
 		if !reflect.DeepEqual(got.Unwrap(), "foo") {
 			t.Errorf("MaybeRight() = %v, want %v", got.Unwrap(), "foo")
 		}
@@ -302,12 +314,15 @@ func TestEither_MaybeRight(t *testing.T) {
 }
 
 func TestEither_Swap(t *testing.T) {
+	t.Parallel()
+
 	got := Right("foo").Swap()
 
 	if !got.IsLeft() {
 		t.Errorf("Swap() = %v, want %v", got.IsLeft(), true)
-		if !reflect.DeepEqual(got.Left(), "foo") {
-			t.Errorf("Swap() = %v, want %v", got.Left(), "foo")
+
+		if !reflect.DeepEqual(*got.Left(), "foo") {
+			t.Errorf("Swap() = %v, want %v", *got.Left(), "foo")
 		}
 	}
 
@@ -315,8 +330,9 @@ func TestEither_Swap(t *testing.T) {
 
 	if !got2.IsRight() {
 		t.Errorf("Swap() = %v, want %v", got2.IsRight(), true)
-		if !reflect.DeepEqual(got2.Right(), "foo") {
-			t.Errorf("Swap() = %v, want %v", got2.Right(), "foo")
+
+		if !reflect.DeepEqual(*got2.Right(), "foo") {
+			t.Errorf("Swap() = %v, want %v", *got2.Right(), "foo")
 		}
 	}
 }
