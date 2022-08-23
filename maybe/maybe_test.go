@@ -2,12 +2,13 @@ package maybe_test
 
 import (
 	"reflect"
+	"strconv"
 	"testing"
 
 	. "github.com/medmouine/gomad/maybe"
 )
 
-func TestMaybe_Just(t *testing.T) {
+func TestJust(t *testing.T) {
 	t.Parallel()
 
 	integer := 123
@@ -36,7 +37,7 @@ func TestMaybe_Just(t *testing.T) {
 	}
 }
 
-func TestMaybe_None(t *testing.T) {
+func TestNone(t *testing.T) {
 	t.Parallel()
 
 	got := None[int]()
@@ -45,7 +46,27 @@ func TestMaybe_None(t *testing.T) {
 	}
 }
 
-func TestMaybe_Of(t *testing.T) {
+func TestMap(t *testing.T) {
+	t.Parallel()
+
+	got := Map(Just(1), func(v int) string {
+		return strconv.Itoa(v) + "!"
+	})
+
+	if !reflect.DeepEqual(*got.Unwrap(), "1!") {
+		t.Errorf("Map() = %v, want %v", *got.Unwrap(), "1!")
+	}
+
+	got = Map(None[int](), func(v int) string {
+		return strconv.Itoa(v) + "!"
+	})
+
+	if !got.IsNil() {
+		t.Errorf("Map() = %v, want %v", got.IsNil(), true)
+	}
+}
+
+func TestOf(t *testing.T) {
 	t.Parallel()
 
 	integer := 123

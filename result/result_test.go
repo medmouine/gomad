@@ -1,108 +1,152 @@
-package result
+package result_test
 
 import (
 	"errors"
 	"reflect"
+	"strconv"
 	"testing"
 
 	"github.com/medmouine/gomad/maybe"
+	. "github.com/medmouine/gomad/result"
 )
 
-func TestOk(t *testing.T) {
-	got := Ok(1)
+var err = errors.New("error")
 
+func TestOk(t *testing.T) {
+	t.Parallel()
+
+	got := Ok(1)
 	if !got.IsOk() {
 		t.Errorf("Ok() = %v, want %v", got.IsOk(), true)
 	}
+
 	if got.IsErr() {
 		t.Errorf("Ok() = %v, want %v", got.IsErr(), false)
 	}
-	if !reflect.DeepEqual(got.Ok(), 1) {
-		t.Errorf("Ok() = %v, want %v", got.Ok(), 1)
+
+	if !reflect.DeepEqual(*got.Ok(), 1) {
+		t.Errorf("Ok() = %v, want %v", *got.Ok(), 1)
 	}
 }
 
 func TestErr(t *testing.T) {
-	got := Err[int](errors.New("error"))
+	t.Parallel()
 
+	got := Err[int](err)
 	if got.IsOk() {
 		t.Errorf("Err() = %v, want %v", got.IsOk(), false)
 	}
+
 	if !got.IsErr() {
 		t.Errorf("Err() = %v, want %v", got.IsErr(), true)
 	}
-	if !reflect.DeepEqual(got.Err(), errors.New("error")) {
-		t.Errorf("Err() = %v, want %v", got.Err(), errors.New("error"))
+
+	if !reflect.DeepEqual(got.Err(), err) {
+		t.Errorf("Err() = %v, want %v", got.Err(), err)
 	}
 }
 
 func TestOf(t *testing.T) {
-	got := Of(1, nil)
+	t.Parallel()
 
+	got := Of(1, nil)
 	if !got.IsOk() {
 		t.Errorf("Of() = %v, want %v", got.IsOk(), true)
 	}
+
 	if got.IsErr() {
 		t.Errorf("Of() = %v, want %v", got.IsErr(), false)
 	}
-	if !reflect.DeepEqual(got.Ok(), 1) {
-		t.Errorf("Of() = %v, want %v", got.Ok(), 1)
+
+	if !reflect.DeepEqual(*got.Ok(), 1) {
+		t.Errorf("Of() = %v, want %v", *got.Ok(), 1)
 	}
 
-	got2 := Of(1, errors.New("error"))
-
+	got2 := Of(1, err)
 	if got2.IsOk() {
 		t.Errorf("Of() = %v, want %v", got2.IsOk(), false)
 	}
+
 	if !got2.IsErr() {
 		t.Errorf("Of() = %v, want %v", got2.IsErr(), true)
 	}
-	if !reflect.DeepEqual(got2.Err(), errors.New("error")) {
-		t.Errorf("Of() = %v, want %v", got2.Err(), errors.New("error"))
+
+	if !reflect.DeepEqual(got2.Err(), err) {
+		t.Errorf("Of() = %v, want %v", got2.Err(), err)
+	}
+}
+
+func TestMap(t *testing.T) {
+	t.Parallel()
+
+	got := Map(Ok(1), func(i int) string {
+		return strconv.Itoa(i) + "!"
+	})
+
+	if !reflect.DeepEqual(got, Ok("1!")) {
+		t.Errorf("Map() = %v, want %v", got, Ok("1!"))
+	}
+
+	got2 := Map(Err[int](err), func(i int) string {
+		return strconv.Itoa(i) + "!"
+	})
+
+	if !reflect.DeepEqual(got2, Err[string](err)) {
+		t.Errorf("Map() = %v, want %v", got2, Err[string](err))
 	}
 }
 
 func TestFromMaybe(t *testing.T) {
-	got := FromMaybe(maybe.Just(1), errors.New("maybe is nil"))
+	t.Parallel()
 
+	got := FromMaybe(maybe.Just(1), err)
 	if !got.IsOk() {
 		t.Errorf("FromMaybe() = %v, want %v", got.IsOk(), true)
 	}
+
 	if got.IsErr() {
 		t.Errorf("FromMaybe() = %v, want %v", got.IsErr(), false)
 	}
-	if !reflect.DeepEqual(got.Ok(), 1) {
+
+	if !reflect.DeepEqual(*got.Ok(), 1) {
 		t.Errorf("FromMaybe() = %v, want %v", got.Ok(), 1)
 	}
 
-	got2 := FromMaybe(maybe.None[int](), errors.New("maybe is nil"))
-
+	got2 := FromMaybe(maybe.None[int](), err)
 	if got2.IsOk() {
 		t.Errorf("FromMaybe() = %v, want %v", got2.IsOk(), false)
 	}
+
 	if !got2.IsErr() {
 		t.Errorf("FromMaybe() = %v, want %v", got2.IsErr(), true)
 	}
-	if !reflect.DeepEqual(got2.Err(), errors.New("maybe is nil")) {
-		t.Errorf("FromMaybe() = %v, want %v", got2.Err(), errors.New("maybe is nil"))
+
+	if !reflect.DeepEqual(got2.Err(), err) {
+		t.Errorf("FromMaybe() = %v, want %v", got2.Err(), err)
 	}
 }
 
 func TestResult_Err(t *testing.T) {
-	got := Err[int](errors.New("error")).Err()
+	t.Parallel()
 
-	if !reflect.DeepEqual(got, errors.New("error")) {
-		t.Errorf("Err() = %v, want %v", got, errors.New("error"))
+	if got := Err[int](err).Err(); !reflect.DeepEqual(got, err) {
+		t.Errorf("Err() = %v, want %v", got, err)
 	}
 
-	defer func() { recover() }()
+	defer func() {
+		if err := recover(); err == nil {
+			t.Errorf("Err() on Ok did not panic")
+		}
+	}()
 	Ok(1).Err()
-	t.Errorf("Err() on Ok did not panic")
 }
 
 func TestResult_IfErr(t *testing.T) {
+	t.Parallel()
+
 	called := false
-	Err[int](errors.New("error")).IfErr(func(err error) {
+
+	Err[int](err).IfErr(func(err error) {
 		called = true
 	})
 
@@ -111,6 +155,7 @@ func TestResult_IfErr(t *testing.T) {
 	}
 
 	called2 := false
+
 	Ok(1).IfErr(func(err error) {
 		called2 = true
 	})
@@ -121,8 +166,11 @@ func TestResult_IfErr(t *testing.T) {
 }
 
 func TestResult_IfOk(t *testing.T) {
+	t.Parallel()
+
 	called := false
-	Err[int](errors.New("error")).IfOk(func(i int) {
+
+	Err[int](err).IfOk(func(i int) {
 		called = true
 	})
 
@@ -131,6 +179,7 @@ func TestResult_IfOk(t *testing.T) {
 	}
 
 	called2 := false
+
 	Ok(1).IfOk(func(i int) {
 		called2 = true
 	})
@@ -141,22 +190,21 @@ func TestResult_IfOk(t *testing.T) {
 }
 
 func TestResult_IsErr(t *testing.T) {
-	got := Err[int](errors.New("error")).IsErr()
+	t.Parallel()
 
-	if !got {
+	if got := Err[int](err).IsErr(); !got {
 		t.Errorf("IsErr() = %v, want %v", got, true)
 	}
 
-	got2 := Ok(1).IsErr()
-
-	if got2 {
+	if got2 := Ok(1).IsErr(); got2 {
 		t.Errorf("IsErr() = %v, want %v", got2, false)
 	}
 }
 
 func TestResult_IsOk(t *testing.T) {
-	got := Err[int](errors.New("error")).IsOk()
+	t.Parallel()
 
+	got := Err[int](err).IsOk()
 	if got {
 		t.Errorf("IsOk() = %v, want %v", got, false)
 	}
@@ -169,7 +217,9 @@ func TestResult_IsOk(t *testing.T) {
 }
 
 func TestResult_Map(t *testing.T) {
-	got := Err[int](errors.New("error")).Map(func(t int) int {
+	t.Parallel()
+
+	got := Err[int](err).Map(func(t int) int {
 		return 5
 	})
 
@@ -181,78 +231,77 @@ func TestResult_Map(t *testing.T) {
 		return 5
 	})
 
-	if !reflect.DeepEqual(got2.Ok(), 5) {
-		t.Errorf("Map() = %v, want %v", got2.Ok(), 5)
+	if !reflect.DeepEqual(*got2.Ok(), 5) {
+		t.Errorf("Map() = %v, want %v", *got2.Ok(), 5)
 	}
 }
 
 func TestResult_MapErr(t *testing.T) {
-	got := Err[int](errors.New("error")).MapErr(func(e error) error {
-		return errors.New("new error")
+	t.Parallel()
+
+	got := Err[int](err).MapErr(func(e error) error {
+		return err
 	})
 
-	if !reflect.DeepEqual(got.Err(), errors.New("new error")) {
-		t.Errorf("MapErr() = %v, want %v", got.Err(), errors.New("new error"))
+	if !reflect.DeepEqual(got.Err(), err) {
+		t.Errorf("MapErr() = %v, want %v", got.Err(), err)
 	}
 
 	got2 := Ok(1).MapErr(func(err error) error {
-		return errors.New("new error")
+		return err
 	})
 
-	if !reflect.DeepEqual(got2.Ok(), 1) {
-		t.Errorf("MapErr() = %v, want %v", got2.Ok(), 1)
+	if !reflect.DeepEqual(*got2.Ok(), 1) {
+		t.Errorf("MapErr() = %v, want %v", *got2.Ok(), 1)
 	}
 }
 
 func TestResult_Maybe(t *testing.T) {
-	got := Err[int](errors.New("error")).Maybe()
+	t.Parallel()
 
-	if !reflect.DeepEqual(got, maybe.None[int]()) {
+	if got := Err[int](err).Maybe(); !reflect.DeepEqual(got, maybe.None[int]()) {
 		t.Errorf("Maybe() = %v, want %v", got, maybe.None[int]())
 	}
 
-	got2 := Ok(1).Maybe()
-
-	if !reflect.DeepEqual(got2, maybe.Just(1)) {
+	if got2 := Ok(1).Maybe(); !reflect.DeepEqual(got2, maybe.Just(1)) {
 		t.Errorf("Maybe() = %v, want %v", got2, maybe.Just(1))
 	}
 }
 
 func TestResult_Ok(t *testing.T) {
-	got := Ok(1).Ok()
+	t.Parallel()
 
-	if !reflect.DeepEqual(got, 1) {
+	if got := *Ok(1).Ok(); !reflect.DeepEqual(got, 1) {
 		t.Errorf("Ok() = %v, want %v", got, 1)
 	}
 
 	defer func() { recover() }()
-	Err[int](errors.New("error")).Ok()
+	Err[int](err).Ok()
 	t.Errorf("Ok() on Err did not panic")
 }
 
 func TestResult_WithDefault(t *testing.T) {
-	got := Ok(1).WithDefault(10)
+	t.Parallel()
 
-	if !reflect.DeepEqual(got.Ok(), 1) {
-		t.Errorf("WithDefault() = %v, want %v", got, 1)
+	if got := Ok(1).WithDefault(10); !reflect.DeepEqual(*got.Ok(), 1) {
+		t.Errorf("WithDefault() = %v, want %v", *got.Ok(), 1)
 	}
 
-	got2 := Err[int](errors.New("error")).WithDefault(10)
+	got2 := Err[int](err).WithDefault(10)
 
-	if !reflect.DeepEqual(got2.Ok(), 10) {
+	if !reflect.DeepEqual(*got2.Ok(), 10) {
 		t.Errorf("WithDefault() = %v, want %v", got2, 10)
 	}
 }
 
 func TestResult_Or(t *testing.T) {
-	got := Ok(1).Or(10)
+	t.Parallel()
 
-	if !reflect.DeepEqual(got, 1) {
+	if got := *Ok(1).Or(10); !reflect.DeepEqual(got, 1) {
 		t.Errorf("Or() = %v, want %v", got, 1)
 	}
-	got2 := Err[int](errors.New("error")).Or(10)
 
-	if !reflect.DeepEqual(got2, 10) {
+	if got2 := *Err[int](err).Or(10); !reflect.DeepEqual(got2, 10) {
 		t.Errorf("Or() = %v, want %v", got2, 10)
 	}
 }
