@@ -27,14 +27,14 @@ func (l left[L, R]) Left() *L {
 	return &l.val
 }
 
-func (l left[L, R]) Right() *R {
+func (left[L, R]) Right() *R {
 	panic(any("called Right on Left"))
 }
 
-func (l left[L, R]) IsLeft() bool {
+func (left[L, R]) IsLeft() bool {
 	return true
 }
 
-func (l left[L, R]) IsRight() bool {
+func (left[L, R]) IsRight() bool {
 	return false
 }

@@ -18,7 +18,6 @@ func newR[L, R any](val R) *right[L, R] {
 /*
 Right returns a new Either value with Right as the passed argument.
 By default, the Left Type is the same as the Right Type.
-
 */
 func Right[R any](value R) Either[R, R] {
 	return newR[R, R](value)
@@ -28,14 +27,14 @@ func (r right[L, R]) Right() *R {
 	return &r.val
 }
 
-func (r right[L, R]) Left() *L {
+func (right[L, R]) Left() *L {
 	panic(any("called Left on Right"))
 }
 
-func (r right[L, R]) IsLeft() bool {
+func (right[L, R]) IsLeft() bool {
 	return false
 }
 
-func (r right[L, R]) IsRight() bool {
+func (right[L, R]) IsRight() bool {
 	return true
 }
