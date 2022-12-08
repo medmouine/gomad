@@ -1,4 +1,4 @@
-package collection_utils
+package fold
 
 import "testing"
 
@@ -35,9 +35,9 @@ func TestFoldLeft(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.desc, func(t *testing.T) {
-			got := FoldLeft(tc.coll, op, tc.x)
+			got := Left(tc.coll, op, tc.x)
 			if got != tc.want {
-				t.Errorf("FoldLeft(%v, %v, %v) = %v; want %v", tc.coll, "op", tc.x, got, tc.want)
+				t.Errorf("Left(%v, %v, %v) = %v; want %v", tc.coll, "op", tc.x, got, tc.want)
 			}
 		})
 	}
@@ -76,9 +76,9 @@ func TestFoldRight(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.desc, func(t *testing.T) {
-			got := FoldRight(tc.coll, op, tc.x)
+			got := Right(tc.coll, op, tc.x)
 			if got != tc.want {
-				t.Errorf("FoldRight(%v, %v, %v) = %v; want %v", tc.coll, "op", tc.x, got, tc.want)
+				t.Errorf("Right(%v, %v, %v) = %v; want %v", tc.coll, "op", tc.x, got, tc.want)
 			}
 		})
 	}
