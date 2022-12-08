@@ -1,43 +1,24 @@
 package io
 
 type IO[T any] interface {
-	Call() T
-	Map(f func(T) T) IO[T]
+	Run() T
+	Bind(func(T) IO[T]) IO[T]
 }
 
 type io[T any] struct {
-	IO[T]
-	f func() T
+	v T
+	f func()
 }
 
-func Of[T any](t T) IO[T] {
-	return io[T]{
-		f: func() T {
-			return t
-		},
-	}
+func Of[T any](v T, f func()) IO[T] {
+	return &io[T]{v: v, f: f}
 }
 
-func From[T any](f func() T) IO[T] {
-	return io[T]{
-		f: f,
-	}
+func (io io[T]) Run() T {
+	io.f()
+	return io.v
 }
 
-func Map[T any, U any](io IO[T], fn func(T) U) IO[U] {
-	f := func() U {
-		return fn(io.Call())
-	}
-	return From(f)
-}
-
-func (i io[T]) Call() T {
-	return i.f()
-}
-
-func (i io[T]) Map(fn func(T) T) IO[T] {
-	f := func() T {
-		return fn(i.Call())
-	}
-	return From(f)
+func (io io[T]) Bind(f func(T) IO[T]) IO[T] {
+	return f(io.v)
 }
